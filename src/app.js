@@ -3,7 +3,7 @@ const app = express();
 
 // Define your whitelist and queryAndParseAppSettings function
 const whitelist = ['key1', 'key2', 'key3'];
-const queryAndParseAppSettings = async (req, keys) => {
+const queryAndParseSettings = async (req, keys) => {
   // Replace this with your own logic
   return keys.reduce((acc, key) => {
     acc[key] = `value-${key}`;
@@ -13,7 +13,7 @@ const queryAndParseAppSettings = async (req, keys) => {
 };
 
 
-const getApplicationSettings = (whitelist) => async (req, res) => {
+const getSettings = (whitelist) => async (req, res) => {
   const { keys: queryKeys } = req.query;
   const paramKeys = req.params;
   const keys = queryKeys || paramKeys?.keys;
@@ -29,7 +29,7 @@ const getApplicationSettings = (whitelist) => async (req, res) => {
     res.status(400).send(`${invalidKeys.join(', ')} not in whitelist`);
     return;
   }
-  const results = await queryAndParseAppSettings(req, keyArray);
+  const results = await queryAndParseSettings(req, keyArray);
 
   res.json(results);
 };
@@ -39,7 +39,7 @@ const getApplicationSettings = (whitelist) => async (req, res) => {
 // Works: http://localhost:3000/settings/key2
 // Fails: http://localhost:3000/settings/boop
 // Vunlerablility: http://localhost:3000/settings/%3Cimg%20src=x%20onerror=alert(origin)%3E
-app.get('/settings/:keys', getApplicationSettings(whitelist));
+app.get('/settings/:keys', getSettings(whitelist));
 
 
 app.listen(3000, function () {
