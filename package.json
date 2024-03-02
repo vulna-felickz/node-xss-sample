@@ -1,0 +1,12 @@
+{
+  "name": "my-nodejs-app",
+  "version": "1.0.0",
+  "description": "A Node.js application with custom middleware",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
