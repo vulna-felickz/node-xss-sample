@@ -41,6 +41,13 @@ const getSettings = (whitelist) => async (req, res) => {
 // Vunlerablility: http://localhost:3000/settings/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/settings/:keys', getSettings(whitelist));
 
+// Vulnerable: http://localhost:3000/echo/%3Cimg%20src=x%20onerror=alert(origin)%3E
+app.get('/echo/:message', (req, res) => {
+  const { message } = req.params;
+  res.send(message);
+});
+
+
 
 app.listen(3000, function () {
   console.log('App listening on port 3000!');
