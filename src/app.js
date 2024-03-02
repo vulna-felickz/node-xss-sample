@@ -47,7 +47,13 @@ app.get('/echo/:message', (req, res) => {
   res.send(message);
 });
 
+const echo2 = (req, res) => {
+  const { message } = req.params;
+  res.send(message);
+};
 
+// Vulnerable: http://localhost:3000/echo2/%3Cimg%20src=x%20onerror=alert(origin)%3E
+app.get('/echo2/:message', echo2);
 
 app.listen(3000, function () {
   console.log('App listening on port 3000!');
