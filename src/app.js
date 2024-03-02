@@ -55,6 +55,22 @@ const echo2 = (req, res) => {
 // Vulnerable: http://localhost:3000/echo2/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/echo2/:message', echo2);
 
+
+const echo3 = (req, res) => {
+  const { message } = req.params;
+
+  const messageArray = typeof message === 'string' ? [message] : message;
+  // use the filter method on a list of defined strings "test" and "test2" to check if the message is in the list, otherwise return the message
+  var notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2") );
+
+  res.send("notmatch: " + notmatch + " message: " + message);
+};
+
+// NotVulnerable: http://localhost:3000/echo3/test
+// NotVulnerable: http://localhost:3000/echo3/abcd
+// Vulnerable: http://localhost:3000/echo3/%3Cimg%20src=x%20onerror=alert(origin)%3E
+app.get('/echo3/:message', echo3);
+
 app.listen(3000, function () {
   console.log('App listening on port 3000!');
 });
