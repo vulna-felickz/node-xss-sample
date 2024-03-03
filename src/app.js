@@ -30,6 +30,28 @@ const getSettings = (whitelist) => async (req, res) => {
   res.json(results);
 };
 
+//Async Middleware with no parameter (global variable instead)
+const getSettingsNoParam = async (req, res) => {
+  const { keys: queryKeys } = req.query;
+  const paramKeys = req.params;
+  const keys = queryKeys || paramKeys?.keys;
+
+  if (!keys) {
+    res.status(400).send('No keys provided');
+    return;
+  }
+  const keyArray = typeof keys === 'string' ? [keys] : keys;
+  const invalidKeys = keyArray.filter(key => !global_whitelist.includes(key));
+
+  if (invalidKeys.length) {
+    res.status(400).send(`${invalidKeys.join(', ')} not in whitelist`);
+    return;
+  }
+  const results = await queryAndParseSettings(req, keyArray);
+
+  res.json(results);
+};
+
 //Syncronous Middleware that accepts a parameter as a closure
 const getSettingsSync = (whitelist) =>  (req, res) => {
   const { keys: queryKeys } = req.query;
@@ -87,23 +109,31 @@ const getSettingsSyncNoParam = (req, res) => {
 };
 
 
-// Use the middleware for the /settings route
+// Use the ASYNC middleware for the /settings route
 // 200: http://localhost:3000/settings/key2
 // 400: http://localhost:3000/settings/boop
 // 400 but Vunlerablility Not Found 🤔: http://localhost:3000/settings/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/settings/:keys', getSettings(global_whitelist));
 
-// Use the middleware for the /settingsSync route
+// Use the ASYNC middleware for the /getSettingsNoParam route
+// 200: http://localhost:3000/getSettingsNoParam/key2
+// 400: http://localhost:3000/getSettingsNoParam/boop
+// 400 Vunlerablility Not Found 🤔: http://localhost:3000/getSettingsNoParam/%3Cimg%20src=x%20onerror=alert(origin)%3E
+app.get('/getSettingsNoParam/:keys', getSettingsNoParam);
+
+// Use the SYNCRONOUS middleware for the /settingsSync route
 // 200: http://localhost:3000/settingsSync/key2
 // 400: http://localhost:3000/settingsSync/boop
 // 400 Vunlerablility Not Found 🤔: http://localhost:3000/settingsSync/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/settingsSync/:keys', getSettingsSync(global_whitelist));
 
-// Use the middleware for the /settingsSyncNoParam route
+// Use the SYNCRONOUS middleware for the /settingsSyncNoParam route
 // 200: http://localhost:3000/settingsSyncNoParam/key2
 // 400: http://localhost:3000/settingsSyncNoParam/boop
 // 400 Vunlerablility FOUND 🤪: http://localhost:3000/settingsSyncNoParam/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/settingsSyncNoParam/:keys', getSettingsSyncNoParam);
+
+
 
 
 // OTHER TESTING - Everything was fine
