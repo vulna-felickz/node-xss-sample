@@ -189,10 +189,37 @@ const echo4 = (unusedparam) => (req, res) => {
   res.send("OK! Whitelist:"+unusedparam);
 };
 
+const echo4Async = (unusedparam) => async (req, res) => {
+  const { keys: queryKeys } = req.query;
+  const paramKeys = req.params;
+  const message = queryKeys || paramKeys?.keys;
+
+  if (!message) {
+    res.status(400).send('No keys provided');
+    return;
+  }
+
+  const messageArray = typeof message === 'string' ? [message] : message;
+  // use the filter method on a list of defined strings "test" and "test2" to check if the message is in the list, otherwise return the message
+  var notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2") );
+
+  if (notmatch.length) {
+    res.send("notmatch: " + notmatch + " message: " + message);
+    return;
+  }
+
+  res.send("OK! Whitelist:"+unusedparam);
+};
+
 // OK - in whitelist: http://localhost:3000/echo4/test
 // NOT - in whitelist: http://localhost:3000/echo4/abcd
 // Vulnerability: http://localhost:3000/echo4/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/echo4/:keys', echo4(global_whitelist));
+
+// OK - in whitelist: http://localhost:3000/echo4Async/test
+// NOT - in whitelist: http://localhost:3000/echo4Async/abcd
+// Vulnerability: http://localhost:3000/echo4Async/%3Cimg%20src=x%20onerror=alert(origin)%3E
+app.get('/echo4Async/:keys', echo4Async(global_whitelist));
 
 app.listen(3000, function () {
   console.log('App listening on port 3000!');
