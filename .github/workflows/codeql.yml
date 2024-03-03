@@ -59,7 +59,7 @@ jobs:
         #config-file: GitHubSecurityLab/CodeQL-Community-Packs/configs/audit.yml@main
         config: |
           disable-default-queries: true
-          queries:
+          packs:
             - uses: codeql/javascript-queries
           query-filters:
             - include:
