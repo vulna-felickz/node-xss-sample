@@ -8,7 +8,7 @@ const queryAndParseSettings = async (req, keys) => {
 };
 
 
-//Middleware that accepts a parameter as a closure
+//Async Middleware that accepts a parameter as a closure
 const getSettings = (whitelist) => async (req, res) => {
   const { keys: queryKeys } = req.query;
   const paramKeys = req.params;
@@ -30,8 +30,8 @@ const getSettings = (whitelist) => async (req, res) => {
   res.json(results);
 };
 
-//Middleware that does not have any parameters - uses global variable instead
-const getSettings2 =  async (req, res) => {
+//Syncronous Middleware that accepts a parameter as a closure
+const getSettingsSync = (whitelist) =>  (req, res) => {
   const { keys: queryKeys } = req.query;
   const paramKeys = req.params;
   const keys = queryKeys || paramKeys?.keys;
@@ -41,13 +41,13 @@ const getSettings2 =  async (req, res) => {
     return;
   }
   const keyArray = typeof keys === 'string' ? [keys] : keys;
-  const invalidKeys = keyArray.filter(key => !global_whitelist.includes(key));
+  const invalidKeys = keyArray.filter(key => !whitelist.includes(key));
 
   if (invalidKeys.length) {
     res.status(400).send(`${invalidKeys.join(', ')} not in whitelist`);
     return;
   }
-  const results = await queryAndParseSettings(req, keyArray);
+  const results = queryAndParseSettings(req, keyArray);
 
   res.json(results);
 };
@@ -59,11 +59,11 @@ const getSettings2 =  async (req, res) => {
 // 400 but Vunlerablility Not Found 🤔: http://localhost:3000/settings/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/settings/:keys', getSettings(global_whitelist));
 
-// Use the middleware for the /settings route
-// Works: http://localhost:3000/settings2/key2
-// Fails: http://localhost:3000/settings2/boop
-// 400 Vunlerablility FOUND 🤪: http://localhost:3000/settings2/%3Cimg%20src=x%20onerror=alert(origin)%3E
-app.get('/settings2/:keys', getSettings2);
+// Use the middleware for the /settingsSync route
+// Works: http://localhost:3000/settingsSync/key2
+// Fails: http://localhost:3000/settingsSync/boop
+// 400 Vunlerablility FOUND 🤪: http://localhost:3000/settingsSync/%3Cimg%20src=x%20onerror=alert(origin)%3E
+app.get('/settingsSync/:keys', getSettingsSync(global_whitelist));
 
 
 // OTHER TESTING - Everything was fine
