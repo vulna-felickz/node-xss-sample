@@ -71,7 +71,7 @@ const echo3 = (req, res) => {
 // Vulnerability: http://localhost:3000/echo3/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/echo3/:message', echo3);
 
-const echo4 = (whitelist) => (req, res) => {
+const echo4 = (unusedparam) => (req, res) => {
   const { keys: queryKeys } = req.query;
   const paramKeys = req.params;
   const message = queryKeys || paramKeys?.keys;
@@ -91,14 +91,14 @@ const echo4 = (whitelist) => (req, res) => {
     return;
   }
 
-  res.send("OK! Whitelist:"+whitelist);
+  res.send("OK! Whitelist:"+unusedparam);
 
 };
 
 // OK - in whitelist: http://localhost:3000/echo4/test
 // NOT - in whitelist: http://localhost:3000/echo4/abcd
 // Vulnerability: http://localhost:3000/echo4/%3Cimg%20src=x%20onerror=alert(origin)%3E
-app.get('/echo4/:keys', echo4);
+app.get('/echo4/:keys', echo4(whitelist));
 
 app.listen(3000, function () {
   console.log('App listening on port 3000!');
