@@ -60,7 +60,7 @@ jobs:
         config: |
           disable-default-queries: true
           packs:
-            - uses: codeql/javascript-queries
+            - codeql/javascript-queries
           query-filters:
             - include:
                 id: js/reflected-xss
