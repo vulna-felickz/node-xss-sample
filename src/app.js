@@ -130,7 +130,7 @@ app.get('/settingsSync/:keys', getSettingsSync(global_whitelist));
 // Use the SYNCRONOUS middleware for the /settingsSyncNoParam route
 // 200: http://localhost:3000/settingsSyncNoParam/key2
 // 400: http://localhost:3000/settingsSyncNoParam/boop
-// 400 Vunlerablility FOUND 🤪: http://localhost:3000/settingsSyncNoParam/%3Cimg%20src=x%20onerror=alert(origin)%3E
+// 400 Vunlerablility Not Found 🤔: http://localhost:3000/settingsSyncNoParam/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/settingsSyncNoParam/:keys', getSettingsSyncNoParam);
 
 
