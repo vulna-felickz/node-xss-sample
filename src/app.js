@@ -47,9 +47,15 @@ const getSettingsSync = (whitelist) =>  (req, res) => {
     res.status(400).send(`${invalidKeys.join(', ')} not in whitelist`);
     return;
   }
-  const results = queryAndParseSettings(req, keyArray);
 
-  res.json(results);
+  // call the async function via promise
+  queryAndParseSettings(req, keyArray)
+    .then(results => {
+      res.json(results);
+    })
+    .catch(error => {
+      res.status(500).send('Error retrieving settings');
+    });
 };
 
 
