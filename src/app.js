@@ -41,7 +41,7 @@ const getSettings = (whitelist) => async (req, res) => {
 // Vunlerablility Not Found 🤔: http://localhost:3000/settings/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/settings/:keys', getSettings(whitelist));
 
-// Vulnerable: http://localhost:3000/echo/%3Cimg%20src=x%20onerror=alert(origin)%3E
+// Vulnerability: http://localhost:3000/echo/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/echo/:message', (req, res) => {
   const { message } = req.params;
   res.send(message);
@@ -52,7 +52,7 @@ const echo2 = (req, res) => {
   res.send(message);
 };
 
-// Vulnerable: http://localhost:3000/echo2/%3Cimg%20src=x%20onerror=alert(origin)%3E
+// Vulnerability: http://localhost:3000/echo2/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/echo2/:message', echo2);
 
 
@@ -68,10 +68,10 @@ const echo3 = (req, res) => {
 
 // NotVulnerable: http://localhost:3000/echo3/test
 // NotVulnerable: http://localhost:3000/echo3/abcd
-// Vulnerable: http://localhost:3000/echo3/%3Cimg%20src=x%20onerror=alert(origin)%3E
+// Vulnerability: http://localhost:3000/echo3/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/echo3/:message', echo3);
 
-const echo4 = (req, res) => {
+const echo4 = (whitelist) => (req, res) => {
   const { keys: queryKeys } = req.query;
   const paramKeys = req.params;
   const message = queryKeys || paramKeys?.keys;
@@ -91,13 +91,13 @@ const echo4 = (req, res) => {
     return;
   }
 
-  res.send("OK");
+  res.send("OK! Whitelist:"+whitelist);
 
 };
 
-// NotVulnerable: http://localhost:3000/echo4/test
-// NotVulnerable: http://localhost:3000/echo4/abcd
-// Vulnerable: http://localhost:3000/echo4/%3Cimg%20src=x%20onerror=alert(origin)%3E
+// OK - in whitelist: http://localhost:3000/echo4/test
+// NOT - in whitelist: http://localhost:3000/echo4/abcd
+// Vulnerability: http://localhost:3000/echo4/%3Cimg%20src=x%20onerror=alert(origin)%3E
 app.get('/echo4/:keys', echo4);
 
 app.listen(3000, function () {
