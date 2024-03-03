@@ -76,6 +76,12 @@ const echo4 = (req, res) => {
   const paramKeys = req.params;
   const message = queryKeys || paramKeys?.keys;
 
+  if (!message) {
+    res.status(400).send('No keys provided');
+    return;
+  }
+
+
   const messageArray = typeof message === 'string' ? [message] : message;
   // use the filter method on a list of defined strings "test" and "test2" to check if the message is in the list, otherwise return the message
   var notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2") );
