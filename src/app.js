@@ -80,7 +80,13 @@ const echo4 = (req, res) => {
   // use the filter method on a list of defined strings "test" and "test2" to check if the message is in the list, otherwise return the message
   var notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2") );
 
-  res.send("notmatch: " + notmatch + " message: " + message);
+  if (notmatch.length) {
+    res.send("notmatch: " + notmatch + " message: " + message);
+    return;
+  }
+
+  res.send("OK");
+
 };
 
 // NotVulnerable: http://localhost:3000/echo4/test
