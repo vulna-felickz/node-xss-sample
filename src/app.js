@@ -22,7 +22,8 @@ const getSettings = (whitelist) => async (req, res) => {
   const invalidKeys = keyArray.filter(key => !whitelist.includes(key));
 
   if (invalidKeys.length) {
-    res.status(400).send(`${invalidKeys.join(', ')} not in whitelist`);
+    res.send(`${invalidKeys.join(', ')} not in whitelist`);
+    //res.status(400).send(`${invalidKeys.join(', ')} not in whitelist`);
     return;
   }
   const results = await queryAndParseSettings(req, keyArray);
