@@ -202,7 +202,8 @@ const echo4Async = (unusedparam) => async (req, res) => {
 
   const messageArray = typeof message === 'string' ? [message] : message;
   // use the filter method on a list of defined strings "test" and "test2" to check if the message is in the list, otherwise return the message
-  var notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2") );
+  // const
+  const notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2") );
 
   if (notmatch.length) {
     res.status(400).send("notmatch: " + notmatch + " message: " + message);
