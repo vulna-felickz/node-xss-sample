@@ -206,7 +206,7 @@ const echo4Async = (unusedparam) => async (req, res) => {
   const notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2") );
 
   if (notmatch.length) {
-    return res.status(400).send("notmatch: " + notmatch + " message: " + message);
+    return res.status(400).send("notmatch: " + notmatch );
     //return;
   }
 
