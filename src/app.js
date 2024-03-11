@@ -200,12 +200,27 @@ const echo4Async = (unusedparam) => async (req, res) => {
     return;
   }
 
+  // Some regex vairant of this - this is nonsense :D
+  // var denyList = ['key2', 'test', 'test2'];
+  // if(new RegExp(denyList.join('|')).test(message))
+  // {
+  //   res.send("notmatch: " + message.filter(item=>!denyList.includes(item)));
+  //   return;
+  // }
+
   // Just treat it like a string - this is some wacky logic - but it is vulnerable all the same
-  const validated = !message.toString().includes('key2') ? message : message.toString().replace('key2', '');
-  if (validated !== message) {
-    res.status(400).send("notmatch: " + validated);
+  if (message.toString().includes('key2') || message.toString().includes('test')) {
+    res.status(400).send("notmatch: " +  message.toString().replace('key2', '').replace('test', ''));
     return;
   }
+
+
+  // // Just treat it like a string - this is some wacky logic - but it is vulnerable all the same
+  // const validated = !message.toString().includes('key2') ? message : message.toString().replace('key2', '');
+  // if (validated !== message) {
+  //   res.status(400).send("notmatch: " + validated);
+  //   return;
+  // }
 
 
   // Convert array to a string?
