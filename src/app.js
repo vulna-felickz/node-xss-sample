@@ -200,6 +200,14 @@ const echo4Async = (unusedparam) => async (req, res) => {
     return;
   }
 
+  // Just treat it like a string - this is some wacky logic - but it is vulnerable all the same
+  const validated = !message.toString().includes('key2') ? message : message.toString().replace('key2', '');
+  if (validated !== message) {
+    res.status(400).send("notmatch: " + validated);
+    return;
+  }
+
+
   // Convert array to a string?
   const messageCSV = Array.isArray(message) ? message.join(',') : message;
   const notmatchCSV = messageCSV.split(',').filter(item => !item.includes('key2'));
