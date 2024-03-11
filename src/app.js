@@ -54,7 +54,7 @@ const getSettingsNoParam = async (req, res) => {
 };
 
 //Syncronous Middleware that accepts a parameter as a closure
-const getSettingsSync = (whitelist) =>  (req, res) => {
+const getSettingsSync = (whitelist) => (req, res) => {
   const { keys: queryKeys } = req.query;
   const paramKeys = req.params;
   const keys = queryKeys || paramKeys?.keys;
@@ -180,14 +180,14 @@ const echo4 = (unusedparam) => (req, res) => {
 
   const messageArray = typeof message === 'string' ? [message] : message;
   // use the filter method on a list of defined strings "test" and "test2" to check if the message is in the list, otherwise return the message
-  var notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2") );
+  var notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2"));
 
   if (notmatch.length) {
     res.send("notmatch: " + notmatch + " message: " + message);
     return;
   }
 
-  res.send("OK! Whitelist:"+unusedparam);
+  res.send("OK! Whitelist:" + unusedparam);
 };
 
 const echo4Async = (unusedparam) => async (req, res) => {
@@ -200,17 +200,26 @@ const echo4Async = (unusedparam) => async (req, res) => {
     return;
   }
 
+  // Convert array to a string?
+  const messageCSV = Array.isArray(message) ? message.join(',') : message;
+  const notmatchCSV = messageCSV.split(',').filter(item => !item.includes('key2'));
+  if (notmatch.length) {
+    res.status(400).send("notmatchcsv: " + notmatchCSV);
+    return;
+  }
+
+  //Convert string to an array
   const messageArray = typeof message === 'string' ? [message] : message;
   // use the filter method on a list of defined strings "test" and "test2" to check if the message is in the list, otherwise return the message
   // const
-  const notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2") );
+  const notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2"));
 
-  //if (notmatch.length) {
-    return res.status(400).send("notmatch: " + notmatch );
-    //return;
-  //}
+  if (notmatch.length) {
+    res.status(400).send("notmatch: " + notmatch);
+    return;
+  }
 
-  res.send("OK! Whitelist:"+unusedparam);
+  res.send("OK! Whitelist:" + unusedparam);
 };
 
 // OK - in whitelist: http://localhost:3000/echo4/test
@@ -221,7 +230,10 @@ app.get('/echo4/:keys', echo4(global_whitelist));
 // OK - in whitelist: http://localhost:3000/echo4Async/test
 // NOT - in whitelist: http://localhost:3000/echo4Async/abcd
 // Vulnerability: http://localhost:3000/echo4Async/%3Cimg%20src=x%20onerror=alert(origin)%3E
-app.get('/echo4Async/:keys', echo4Async(global_whitelist));
+// http://localhost:3000/echo4Async/key1,key2,key3
+// http://localhost:3000/echo4Async?keys=key1,key2,key3
+// http://localhost:3000/echo4Async?keys=key1&keys=key2&keys=key3
+app.get('/echo4Async', echo4Async(global_whitelist));
 
 app.listen(3000, function () {
   console.log('App listening on port 3000!');
