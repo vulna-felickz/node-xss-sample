@@ -238,7 +238,7 @@ const echo4Async = (unusedparam) => async (req, res) => {
   const notmatch = messageArray.filter((test) => !test.includes("test") && !test.includes("test2"));
 
   if (notmatch.length) {
-    res.status(400).send("notmatch: " + notmatch);
+    res.status(400).send("notmatch: " + notmatch + "is this detected" + messageArray.toString() );
     return;
   }
 
